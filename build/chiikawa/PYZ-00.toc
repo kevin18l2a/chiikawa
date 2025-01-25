@@ -1,0 +1,1 @@
+('/Users/kevin/Desktop/code/chiikawa/build/chiikawa/PYZ-00.pyz', [])

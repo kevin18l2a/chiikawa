@@ -1,0 +1,12 @@
+altgraph==0.17.4
+certifi==2024.12.14
+cffi==1.17.1
+macholib==1.16.3
+packaging==24.2
+pillow==11.1.0
+playsound3==2.5.2
+pycparser==2.22
+pydub==0.25.1
+pyinstaller==6.11.1
+pyinstaller-hooks-contrib==2025.0
+setuptools==75.8.0
