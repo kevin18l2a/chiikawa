@@ -1,1 +1,2 @@
-('/Users/kevin/Desktop/code/chiikawa/build/chiikawa/PYZ-00.pyz', [])
+('/Users/kevin/Desktop/code/GIT/chiikawa/chiikawa/build/chiikawa/PYZ-00.pyz',
+ [])
