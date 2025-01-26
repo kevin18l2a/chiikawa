@@ -15,11 +15,17 @@ def resource_path(relative_path):
 
 
 # 加载音频并播放
-def play_sound(file_path):
+def play_sound(file_path, loop=False, stop_event=None):
     def _play_sound():
-        playsound(file_path)
-    
-    threading.Thread(target=_play_sound, daemon=True).start()
+        while not stop_event.is_set():  # 每次播放前检查是否需要停止
+            playsound(file_path)
+            if not loop:
+                break
+
+    stop_event = threading.Event()  # 创建停止事件
+    thread = threading.Thread(target=_play_sound, daemon=True)
+    thread.start()
+    return stop_event, thread
 
 
 # 创建游戏窗口
@@ -30,8 +36,7 @@ class GameWindow:
         self.root.geometry("600x600")
         self.root.resizable(False, False)
 
-        self.canvas = tk.Canvas(self.root, width=600, height=600, bg="skyblue")
-        self.canvas.pack()
+        self.load_background()
 
         self.score = 0
         self.score_text = self.canvas.create_text(50, 20, text=f"分數: {self.score}", font=("Arial", 16), fill="black")
@@ -41,6 +46,30 @@ class GameWindow:
         self.load_images()
         self.bind_events()
         self.update_game()
+
+        # 创建停止事件
+        self.stop_event = threading.Event()
+
+        # 创建线程集合来管理所有线程
+        self.threads = []
+
+        # 播放背景音乐
+        self.stop_music_event, music_thread = play_sound(resource_path("resources/audios/background_music.wav"), loop=True, stop_event=self.stop_event)
+        self.threads.append(music_thread)
+
+        # 绑定关闭事件
+        # self.root.protocol("WM_DELETE_WINDOW", self.on_close)
+
+    def load_background(self):
+        # 加载背景图片
+        background_image_path = resource_path("resources/images/background_grass.png")
+        background_image = Image.open(background_image_path).resize((600, 600))
+        self.background_photo = ImageTk.PhotoImage(background_image)
+
+        # 创建Canvas并设置背景图片
+        self.canvas = tk.Canvas(self.root, width=600, height=600)
+        self.canvas.pack()
+        self.canvas.create_image(0, 0, image=self.background_photo, anchor="nw")
 
     def load_images(self):
         # 加载图片
@@ -94,17 +123,24 @@ class GameWindow:
                 self.canvas.itemconfig(self.score_text, text=f"分數: {self.score}")
                 play_sound(resource_path("resources/audios/wolayaha.wav"))  # 在后台播放音效
                 self.canvas.itemconfig(self.player, image=self.rabbit_get_lemon_photo)
-                
+
                 # 延时恢复兔子图片
                 self.root.after(3000, lambda: self.canvas.itemconfig(self.player, image=self.rabbit_photo))
-                
+
                 self.canvas.delete(obj.image)
                 self.falling_objects.remove(obj)
             elif obj.y > 600:
                 self.canvas.delete(obj.image)
                 self.falling_objects.remove(obj)
 
+    def on_close(self):
+        # 在窗口关闭时停止所有线程
+        self.stop_event.set()  # 停止音频播放
+        for thread in self.threads:
+            thread.join()  # 确保所有线程都退出
+        self.root.destroy()
 
+        
 class FallingObject:
     def __init__(self, canvas, lemon_photo):
         self.canvas = canvas
