@@ -19,7 +19,7 @@ Follow the steps below to get the project up and running on your local machine.
 First, clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/yourusername/chiikawa-game.git
+git clone https://github.com/kevin18l2a/chiikawa.git
 cd chiikawa-game
 ```
 
@@ -134,7 +134,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-For issues or suggestions, feel free to contact us through GitHub Issues or via email at `yourname@example.com`.
+For issues or suggestions, feel free to contact us through GitHub Issues or via email at `kevin18l2aa@gmail.com`.
 
 ---
 
